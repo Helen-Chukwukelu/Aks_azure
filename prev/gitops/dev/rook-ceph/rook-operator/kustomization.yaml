@@ -1,0 +1,6 @@
+resources:
+- crds.yaml
+#- https://github.com/rook/rook/blob/master/cluster/examples/kubernetes/ceph/crds.yaml
+- common.yaml
+- operator.yaml
+  

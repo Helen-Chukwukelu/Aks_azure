@@ -1,0 +1,7 @@
+resources:
+  # - https://raw.githubusercontent.com/minio/operator/master/examples/tenant.yaml
+  # - minio-chart.yaml
+  # - tenant.yaml
+  # - class.yaml
+  # - operator.yaml
+  # - object-store.yaml

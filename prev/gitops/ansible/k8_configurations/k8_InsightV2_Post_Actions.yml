@@ -1,0 +1,60 @@
+---
+# This script is run from the bastion/ansible server that installed the k8 cluster with kubespray
+- hosts: localhost
+  gather_facts: false
+  connection: local
+
+  vars:
+    namespaces:
+      - common
+      - default
+      - cert-manager
+      - insight
+      - data-mongodb
+      - data-consul
+      - data-vault
+      - web
+      - monitoring
+      - linkerd
+      - argocd
+      - kube-node-lease
+      - kube-public
+      - kube-system
+      - kube-system
+      - local-path-storage
+      - metallb-system
+      - nginx-ingress
+      - rabbitmq-system
+      - rook-ceph
+
+    artifact_secrets:
+      - yml_definitions/gcrjsonkey-data-consul.yml
+      - yml_definitions/gcrjsonkey-data-vault.yaml
+      - yml_definitions/gcrjsonkey-linkerd.yaml
+      - yml_definitions/gcrjsonkey-web.yaml
+      - yml_definitions/gcrjsonkey-data-mongodb.yml
+      - yml_definitions/gcrjsonkey-insight.yml
+
+  collections:
+    - kubernetes.core
+
+  tasks:
+    - name: "Create Multiple NameSpaces"
+      kubernetes.core.k8s:
+        name: "{{ item }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+      with_items: "{{ namespaces }}"
+
+    - name: Deploy Google Artifactory Secrets
+      kubernetes.core.k8s:
+        state: present
+        src: "{{item}}"
+      with_items: "{{artifact_secrets}}"
+
+    - name: Deploy ArgoCD Ingress Controller
+      kubernetes.core.k8s:
+        state: present
+        src: yml_definitions/argoInstall.yaml
+        namespace: argocd

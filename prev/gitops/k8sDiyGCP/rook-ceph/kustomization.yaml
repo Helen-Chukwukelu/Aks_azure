@@ -1,0 +1,4 @@
+resources:
+  - rook-operator-chart.yaml
+  - baremetal-cluster.yaml
+#  - cloud-cluster.yaml

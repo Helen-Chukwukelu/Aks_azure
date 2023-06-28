@@ -1,0 +1,12 @@
+<< From /charts/headlamp >>
+THIS DIRECTORY&FILES IS SPECIFIC TO INSTALLING HEADLAMP IN ANY CLUSTER - BUT SPECIFIC TO MINIKUBE for devOps.
+
+0.  Startup minKube - (For installation see:: https://prevoirsolutions.atlassian.net/wiki/spaces/DEVOPS/pages/58916874/MiniKube+Install+on+Linux+VM )
+1.  Make sure you have puled branch master from gitops
+2.  Access the directory /chars/headlamp
+3.  Make sure miniKube or a DIY or a local cluster is running and that argoCD is running. Then run
+        $:~kubectl apply -f headlamp.yaml
+3.  Forward Port
+        $:~kubectl port-forward -n kube-system service/headlamp 8192:80
+4.  Access headlamp on http://localhost:8192  & bypass https security  in browser
+5.  Get the secret by following the link on the page that will display

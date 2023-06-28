@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-gui
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@bitbucket.org:prevoirsolutionsinformatiques/gitops.git
+    targetRevision: HEAD
+    path: dev/kubernetes-gui
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: common
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

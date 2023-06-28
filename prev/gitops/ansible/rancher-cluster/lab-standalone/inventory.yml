@@ -1,0 +1,22 @@
+all:
+  hosts:
+    k8-standalone:
+      ansible_host: 10.168.1.117
+
+  children:
+    kube_control_plane:
+      hosts:
+        k8-standalone:
+
+    kube_workers:
+      hosts:
+        k8-standalone:
+
+    etcd:
+      hosts:
+        k8-standalone:
+
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_workers:

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "insight-version-2",
+  "private_key_id": "4f363527c359c5e08daf51e64325f018d272dad9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC0lL322CF9NLRy\nkZKY77vbVmj28zG8dwhlDGaL7X+fB/BQRZRlJpHKOwet4bRavKQ2xNDrw1BTR4Q8\nlb5VWFL8XyFR7SOgToCmg0dvqe2tFyoPwBUgnvb148Tog6i3cY0GgSO9N73M2nZv\n51i9nTXnNggzTD48JAw1NZOpXVHiDsofbDJ2TCcF1YcMdBOHJS6tsSKokr/s0Vp5\nzK85BiYBa8V4ruyfFXlHmZJnu0mQyqHJEEn7DItt2dePtqPywkLqkO8NhQm+ewdy\nM+O6mEbU5TeKyTS2b0CRaOWtkBNOw4GaQiGx10wopWLowjHhohTBn8Mp2mi0XOa4\nTuyJwABzAgMBAAECggEAVeywt1QAG2OIuTsrVjo8WRG0wEzXzaWWCP7tjIdlwnY0\nkv2Irti7Zk7QSJytBL/eI3FjN8un3Piao3ldJ57vXcamRCViXlT8Qj8VLrzcqw/q\no7PyWaNKP5Yxi7GaBi+xuvaX2uE7Hs6UrIqYXyD/FRVQsZgFxPgiFu93Y49T9wvl\nJje2icB6Ypb7yhbiwiXGRnml1foDN9EUyamf0s2lhvPlT0XX4JgryY1JWGP9KTPi\nar5uh5bwwlYRUl3ZIcfDmPu4oqH0M6pfHClPBOsefQKHfof4PepE5BHN1q4Avy2m\ntdCy4fryQeYu4ND226NREmVe6GJ4w9DpT0zHtSgLgQKBgQDqFx5OgXmgPQ2mdmrG\nzTYT9mX1xW4xxAv9ySsz/vyN8guwCn/+iZQsluqNb2ELbHNFsyKPR0HVr30K5aou\nbiaV6rW3qWiyDYYtTMujrAKrYPAEBdHTGpLgNFRZa6SJW1MES7LbKxXOG6Noa1rX\n/J/XK1Y6+z19YujleoyYKdNe9wKBgQDFe4YA11euS5fytBfnxprXGhGssX50RLaM\nJnbYpT1G+s616dKp/f4+GKNON2wPiTWB7PDOOVRLqyEjBd5kchSavFkqy4bxMUvp\n/Ftq5DTn9oLCSZnODh09cDPLGq5E4mCMQJNoQt2yndEcMG8rSx10+DiTwl6mcIDm\nk1lS6fl/ZQKBgAcWLBS0VrpDHuarLxBVpg10qCGImI1pIfPM40HvtjWV3kS2DKno\nAFRZPUCK3qU540N46NLtlVCiv2ZVDZHaQ9DGCjpFJqY9QpKcgI2z52DIzntQscly\nRIAFFYifeZuu6BR5NjDsXPygWZIPrfBb9XrOFQ40DOh+1g4cZ6UznvKBAoGADkk6\nT3NEl4pGartWg2DdsLPlFW4drMGPxyG9NTz26tyX+Zb5s2x5aPqVTcI6ogEWCtke\nLnz9OSAfHI5/IRsTnIIFnU/t6iLb0Ah+gIQTw7gUi4ORidOBkAE+7fF3K+qIe3zs\nbP1xVkuOZhCm6iXb8qtGRIIqILZAzO1Z5+KfNvUCgYEAuxItX2mkaGs4M31vlLMX\n4kFGTVL0SxyOSsdgrZSkqsvn6w2ImHTwBoCQuCK7j56IhYotrIGFxKcixniePJyQ\n9Kxdh3xcBGT5Gvs75q/dOHhKAOK/hFeqlBd4zf11L4JEGQogjVZoUUxPxlUzwnKE\nP5ITh21PGagzGKkP5r9h7xg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "imagepull-service-account@insight-version-2.iam.gserviceaccount.com",
+  "client_id": "102923558495641259338",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/imagepull-service-account%40insight-version-2.iam.gserviceaccount.com"
+}

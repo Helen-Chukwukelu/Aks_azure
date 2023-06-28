@@ -1,0 +1,155 @@
+#----------------------------------
+# Limit Ranges for common namespace
+#----------------------------------
+
+# Memory-constraints limit and quota
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: memory-constraints
+  namespace: common
+spec:
+  limits:
+  - max:
+      memory: 1Gi
+    min:
+      memory: 500Mi
+    type: Container
+
+---
+# CPU limit and quota
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-constraints
+  namespace: common
+spec:
+  limits:
+  - max:
+      cpu: "800m"
+    min:
+      cpu: "200m"
+    type: Container
+
+---
+# CPU default request and limit
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-default
+  namespace: common
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultRequest:
+      cpu: 0.5
+    type: Container
+
+---
+#-----------------------------------
+# Limit Ranges for insight namespace
+#-----------------------------------
+
+# Memory-constraints limit and quota
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: memory-constraints
+  namespace: insight
+spec:
+  limits:
+  - max:
+      memory: 1Gi
+    min:
+      memory: 500Mi
+    type: Container
+
+---
+# CPU limit and quota
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-constraints
+  namespace: insight
+spec:
+  limits:
+  - max:
+      cpu: "800m"
+    min:
+      cpu: "200m"
+    type: Container
+
+---
+# CPU default request and limit
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-default
+  namespace: insight
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultRequest:
+      cpu: 0.5
+    type: Container
+
+---
+#----------------------------------------
+# Limit Ranges for data-mongodb namespace
+#----------------------------------------
+
+# Memory-constraints limit and quota
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: memory-constraints
+  namespace: data-mongodb
+spec:
+  limits:
+  - max:
+      memory: 1Gi
+    min:
+      memory: 500Mi
+    type: Container
+
+---
+# CPU limit and quota
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-constraints
+  namespace: data-mongodb
+spec:
+  limits:
+  - max:
+      cpu: "800m"
+    min:
+      cpu: "200m"
+    type: Container
+
+---
+# CPU default request and limit
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-default
+  namespace: data-mongodb
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultRequest:
+      cpu: 0.5
+    type: Container
+

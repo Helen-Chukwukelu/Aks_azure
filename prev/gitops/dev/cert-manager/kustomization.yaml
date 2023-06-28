@@ -1,0 +1,6 @@
+resources:
+ # - https://github.com/jetstack/cert-manager/releases/download/v1.5.0/cert-manager.crds.yaml
+ # - nginx-clusterissuer.yaml
+ # - cert-manager-custom.yaml
+ # - vault-issuer.yaml
+  - cert-manager-chart.yaml

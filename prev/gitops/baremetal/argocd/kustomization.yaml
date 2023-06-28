@@ -1,0 +1,19 @@
+resources:
+  - cert-manager.yaml
+  - nginx-controller.yaml
+  - namespaces.yaml
+  - rbac.yaml
+  - monitoring.yaml
+  - rook-ceph.yaml
+  - rabbitmq.yaml
+  - metallb.yaml
+  - vault.yaml
+  - consul.yaml
+  - metrics-server.yaml
+  - mongodb.yaml
+#  - external-secrets.yaml
+#  - loki.yaml
+#  - networkpolicies.yaml
+#  - linkerd.yaml
+#  - limits-quotas.yaml
+

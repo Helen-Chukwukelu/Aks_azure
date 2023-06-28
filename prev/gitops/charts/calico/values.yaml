@@ -1,0 +1,25 @@
+imagePullSecrets: {}
+
+installation:
+  enabled: true
+  kubernetesProvider: "GKE"
+
+certs:
+  node:
+    key:
+    cert:
+    commonName:
+  typha:
+    key:
+    cert:
+    commonName:
+    caBundle:
+
+# Configuration for the tigera operator
+tigeraOperator:
+  image: insight-version-2/calico/tigera/operator
+  version: v1.17.4
+  registry: europe-west4-docker.pkg.dev
+calicoctl:
+  image: europe-west4-docker.pkg.dev/insight-version-2/calico/ctl
+  tag: v3.19.1

@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki-stack-chart
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  destination:
+    namespace: loki-stack
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: loki-stack 
+    repoURL: https://grafana.github.io/loki/charts
+    targetRevision: 2.4.1
+    helm:
+      parameters:
+      - name: grafana.enabled
+        value: "false"
+      - name: prometheus.enabled
+        value: "false"
+      - name: prometheus.alertmanager.persistentVolume.enabled
+        value: "false"
+      - name: prometheus.server.persistentVolume.enabled
+        value: "false"   
+      - name: loki.enabled
+        value: "true" 
+      - name: loki.persistence.enabled
+        value: "true"  
+      - name: loki.persistence.storageClassName
+        value: rook-ceph-bucket  
+      - name: loki.persistence.size
+        value: 10Gi  
+      - name: promtail.enabled
+        value: "true"

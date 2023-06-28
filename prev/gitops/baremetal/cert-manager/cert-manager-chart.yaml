@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager-chart
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  destination:
+    namespace: cert-manager
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: cert-manager
+    repoURL: https://charts.jetstack.io
+    targetRevision: 1.5.0
+    helm:
+      parameters:
+      - name: installCRDs
+        value: "true"
+      # - name: prometheus.enabled
+      #   value: "false"
+      # - name: webhook.timeoutSeconds
+      #   value: 10s

@@ -1,0 +1,39 @@
+all:
+  hosts:
+    k8-master01:
+      ansible_host: 10.168.1.111
+    k8-master02:
+      ansible_host: 10.168.1.112
+    k8-master03:
+      ansible_host: 10.168.1.113
+
+    k8-worker01:
+      ansible_host: 10.168.1.114
+    k8-worker02:
+      ansible_host: 10.168.1.115
+    k8-worker03:
+      ansible_host: 10.168.1.116
+
+
+  children:
+    kube_control_plane:
+      hosts:
+        k8-master01:
+        k8-master02:
+        k8-master03:
+    kube_workers:
+      hosts:
+        k8-worker01:
+        k8-worker02:
+        k8-worker03:
+
+    etcd:
+      hosts:
+        k8-worker01:
+        k8-worker02:
+        k8-worker03:
+
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_workers:

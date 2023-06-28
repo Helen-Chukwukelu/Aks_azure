@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: consul-chart
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@bitbucket.org:prevoirsolutionsinformatiques/gitops.git
+    targetRevision: HEAD
+    path: charts/consul
+    helm:
+      valueFiles: 
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: data-consul
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,9 @@
+resources:
+  - rook-operator-chart.yaml
+  # - baremetal-cluster.yaml
+  # - cloud-cluster.yaml
+  # - ceph-block-storageclass.yaml
+  # - ceph-blockpool.yaml
+  # - ceph-object-store.yaml
+  # - ceph-bucket-storageclass.yaml
+  # - object-bucket-claim.yaml

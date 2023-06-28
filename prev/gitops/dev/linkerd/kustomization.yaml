@@ -1,0 +1,5 @@
+resources:
+  - trust-anchor.yaml
+  - trust-issuer.yaml
+  - linkerd-dev.yaml
+

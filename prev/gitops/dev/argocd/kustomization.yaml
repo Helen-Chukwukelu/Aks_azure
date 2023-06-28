@@ -1,0 +1,20 @@
+resources:
+#  - argocd.yaml
+  - cert-manager.yaml
+  - nginx-controller.yaml
+  - networkpolicies.yaml
+  - linkerd.yaml
+  - namespaces.yaml
+  - rbac.yaml
+  - mongodb.yaml
+# - kubernetes-gui.yaml
+  - limits-quotas.yaml
+  - rabbitmq.yaml
+  - consul.yaml
+  - vault.yaml
+  - redis.yaml
+<<<<<<< HEAD
+#  - rook-ceph.yaml
+  - external-secrets.yaml
+=======
+>>>>>>> c3684f9d0e4d065f3c1cd7862a6f87fdf6e0a615

@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: linkerd-helm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.linkerd.io/stable
+    chart: linkerd2
+    helm:
+      valueFiles: 
+      - values-ha.yaml    
+      parameters:
+      - name: identity.issuer.scheme
+        value: kubernetes.io/tls
+      - name: installNamespace
+        value: "false"
+      - name: global.identityTrustAnchorsPEM
+        value: |
+          -----BEGIN CERTIFICATE-----
+          MIIBjzCCATSgAwIBAgIRAOp9wJTvGABZZUytlrGYQLEwCgYIKoZIzj0EAwIwJTEj
+          MCEGA1UEAxMacm9vdC5saW5rZXJkLmNsdXN0ZXIubG9jYWwwHhcNMjEwODEzMTYz
+          NjU3WhcNMjYwODEyMTYzNjU3WjAlMSMwIQYDVQQDExpyb290LmxpbmtlcmQuY2x1
+          c3Rlci5sb2NhbDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABHO5/itX+Zla4qVM
+          fbEtHrfVkBRtmQgKo992cims9GnjzUAsmmKtw0zrndv9OAXhHuExKIg3imZEgSHS
+          +n4JTqSjRTBDMA4GA1UdDwEB/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgEBMB0G
+          A1UdDgQWBBTDGGOxaAszblOLDrxDoZz1xEcL8zAKBggqhkjOPQQDAgNJADBGAiEA
+          oC0cSZ74Nx1KVJvOgkm/onLr9YhhlOs6d5FJx1EIUvUCIQD5VrOzVs6s64453tbp
+          gN42udMqhGcRda6fCMh/NAsBgA==
+          -----END CERTIFICATE-----
+    targetRevision: 2.10.2
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: linkerd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

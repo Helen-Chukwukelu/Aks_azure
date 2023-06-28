@@ -1,0 +1,47 @@
+loki:
+  config: |
+    storage_config:
+      cassandra:
+        addresses: <comma-separated-IPs-or-hostnames>
+        port: 9042
+        keyspace: lokiindex
+        auth: false
+        username: <username> # only applicable when auth=true
+        password: <password> # only applicable when auth=true
+        SSL: false
+
+    schema_config:
+      configs:
+        - from: 2021-09-14
+          store: cassandra
+          object_store: cassandra
+          schema: v11
+          index:
+            prefix: loki_index_
+            period: 168h
+          chunks:
+            prefix: loki_chunk_
+            period: 168h
+
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 672h
+      # Period with which the table manager will poll for tables
+      poll_interval: 2m
+      # Duration a table will be created before it is needed
+      creation_grace_period: 10m
+
+    # The chunk_store_config block configures how chunks will be cached and how long to wait before saving them to the backing store.
+    chunk_store_config:
+      # The cache configuration for storing chunks
+      chunk_cache_config: <cache_config>
+      # The cache configuration for deduplicating writes
+      write_dedupe_cache_config: <cache_config>
+      # The minimum time between a chunk update and being saved to the store.
+      min_chunk_age: <duration>
+      # Cache index entries older than this period. Default is disabled.
+      cache_lookups_older_than: <duration>
+      # Limit how long back data can be queried. Default is disabled.
+      # This should always be set to a value less than or equal to 
+      # what is set in `table_manager.retention_period`
+      max_look_back_period: <duration>

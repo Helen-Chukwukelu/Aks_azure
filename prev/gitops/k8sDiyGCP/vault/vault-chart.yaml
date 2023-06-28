@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault-chart
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@bitbucket.org:prevoirsolutionsinformatiques/gitops.git
+    targetRevision: HEAD
+    path: charts/vault
+    helm:
+      values: |
+        replicas: 3
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: data-vault
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

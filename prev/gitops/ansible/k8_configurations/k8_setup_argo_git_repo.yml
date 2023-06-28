@@ -1,0 +1,72 @@
+# Setup ArgoCD via CLI
+# RP (c) 4CGROUP 2021
+# Version 1
+
+---
+- name: Add GIT Repository to ArgoCD
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    # Argo CLI
+    argocd_cli_version: 2.1.0-rc3
+    argocd_cli_url: https://github.com/argoproj/argo-cd/releases/download/v{{ argocd_cli_version }}/argocd-linux-amd64
+    argocd_cli_path: /usr/local/bin/argocd
+
+    # Argo User - Password fetched dynamically
+    argocd_admin_name: admin
+    argocd_admin_password:
+
+    # Load Github Private Key
+    GitPrivateSSHKeyFile: "{{ lookup('file', 'ConfigFiles/gitprivkey') }}"
+
+  tasks:
+    - name: Load Git Repository Details
+      include_vars: "ConfigFiles/GitRepo.yml"
+
+    - name: get the username running the deploy
+      become: false
+      changed_when: false
+      local_action: command whoami
+      register: username_on_the_host
+
+    - name: Creates local user bin directory
+      file:
+        path: "/home/{{username_on_the_host.stdout}}/.local/bin"
+        state: directory
+        owner: "{{username_on_the_host.stdout}}"
+        group: "{{username_on_the_host.stdout}}"
+        mode: 0775
+        recurse: yes
+
+    - name: ArgoCD Tool Install | Download command line tool
+      get_url:
+        url: "{{ argocd_cli_url }}"
+        dest: "/home/{{username_on_the_host.stdout}}/.local/bin/argocdcli"
+        owner: "{{username_on_the_host.stdout}}"
+        group: "{{username_on_the_host.stdout}}"
+        mode: 0755
+
+    - name: Get ArgoCD Admin User Password
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        name: argocd-initial-admin-secret
+        namespace: argocd
+      register: ArgoCDSecretData
+
+    - name: Set Temporary Password from Get
+      set_fact:
+        argocd_admin_password: "{{ ArgoCDSecretData['resources'][0]['data']['password'] | b64decode }}"
+
+    - debug: msg="{{argocd_admin_password}}"
+
+    - name: Starting background proxy to ArgoCD via kubectl
+      shell: "(kubectl port-forward svc/argocd-server --namespace=argocd 8443:443 >/dev/null 2>&1 &)"
+      async: 10
+      poll: 0
+
+    #   with_items: "{{ArgoCDSecretData.resources}}"
+    # - debug:
+    #     msg: "{{ ArgoCDSecretData.resources }}"
+#with_items: "{{ argocd_registries }}"

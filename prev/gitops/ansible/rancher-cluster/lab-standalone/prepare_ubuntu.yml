@@ -1,0 +1,28 @@
+---
+- name: Install Docker
+  hosts: all
+  #remote_user: root
+
+  tasks:
+    - name: Ubuntu | Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ubuntu | Start and enable docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ubuntu | Add user(s) to "docker" group
+      user:
+        name: "riaan"
+        groups: "docker"
+        append: true
+
+    - name: Ubuntu | net.bridge.bridge-nf-call-iptables
+      ansible.posix.sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: "1"
+        state: present

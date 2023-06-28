@@ -1,0 +1,6 @@
+# GIT Registry
+argocd_registries:
+  - repo: https://github.com/argoproj/argocd-example-apps.git
+    path: guestbook
+    dest_server: https://kubernetes.default.svc
+    dest_namespace: default
