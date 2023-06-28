@@ -1,0 +1,4 @@
+resources:
+  # - loki-k8s.yaml
+  # - promtail-k8s.yaml
+  - new-loki.yaml

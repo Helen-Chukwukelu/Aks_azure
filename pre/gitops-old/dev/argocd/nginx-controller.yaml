@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-ingress-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://niyez@bitbucket.org/prevoirsolutionsinformatiques/infrastructure-as-code.git
+    targetRevision: HEAD
+    path: gitops/dev/nginx-controller
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx-ingress
+  syncPolicy:
+    automated:
+      prune: true #delete resources made to repo
+      selfHeal: true #reset modification made to cluster
+    syncOptions:
+      - CreateNamespace=true

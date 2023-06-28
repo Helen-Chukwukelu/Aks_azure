@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-rbac
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://bitbucket.org/prevoirsolutionsinformatiques/infrastructure-as-code/src/master/
+    targetRevision: HEAD
+    path: gitops/dev/rbac
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+    syncOptions:
+      - Validate=false
+      - CreateNamespace=true

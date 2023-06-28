@@ -1,0 +1,18 @@
+{{- if eq "gce" (include "optty.ingress.class" .) -}}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "optty.fullname" . }}
+  labels:
+    {{- include "optty.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+{{- if .Values.ingress.gce.sslPolicy}}
+  sslPolicy: {{ .Values.ingress.gce.sslPolicy }}
+{{- end }}
+{{- if .Values.ingress.redirectHttps }}
+  redirectToHttps:
+    enabled: true
+    responseCodeName: PERMANENT_REDIRECT
+{{- end }}
+{{- end }}

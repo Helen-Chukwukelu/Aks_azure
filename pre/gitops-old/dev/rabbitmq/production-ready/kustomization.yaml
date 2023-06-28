@@ -1,0 +1,4 @@
+resources:
+- pod-distruption-budget.yaml
+- rabbitmq.yaml
+#- ssd-gke.yaml

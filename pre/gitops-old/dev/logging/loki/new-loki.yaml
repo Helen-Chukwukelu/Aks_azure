@@ -1,0 +1,240 @@
+---
+# Source: loki/templates/podsecuritypolicy.yaml
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: loki
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    heritage: Helm
+    release: loki
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'persistentVolumeClaim'
+    - 'secret'
+    - 'projected'
+    - 'downwardAPI'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+    - min: 1
+      max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+    - min: 1
+      max: 65535
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+    - ALL
+---
+# Source: loki/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    heritage: Helm
+    release: loki
+  annotations:
+    {}
+  name: loki
+  namespace: logging
+automountServiceAccountToken: true
+---
+# Source: loki/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: loki
+  namespace: logging
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    release: loki
+    heritage: Helm
+data:
+  loki.yaml: ICAgICMgRGlzYWJsZSB0aGUgcmVxdWlyZW1lbnQgdGhhdCBldmVyeSByZXF1ZXN0IHRvIENvcnRleCBoYXMgYQogICAgIyBYLVNjb3BlLU9yZ0lEIGhlYWRlci4gYGZha2VgIHdpbGwgYmUgc3Vic3RpdHV0ZWQgaW4gaW5zdGVhZC4KICAgIGF1dGhfZW5hYmxlZDogZmFsc2UKCiAgICAjIFdlIGRvbid0IHdhbnQgdGhlIHVzdWFsIC9hcGkvcHJvbSBwcmVmaXguCiAgICBodHRwX3ByZWZpeDoKCiAgICBzZXJ2ZXI6CiAgICAgIGh0dHBfbGlzdGVuX3BvcnQ6IDMxMDAKCiAgICAjIHNjaGVtYV9jb25maWc6CiAgICAjICAgY29uZmlnczoKICAgICMgICAtIGZyb206IDIwMjEtMDEtMDEKICAgICMgICAgIHN0b3JlOiBjYXNzYW5kcmEKICAgICMgICAgIG9iamVjdF9zdG9yZTogY2Fzc2FuZHJhCiAgICAjICAgICBzY2hlbWE6IHYxMQogICAgIyAgICAgaW5kZXg6CiAgICAjICAgICAgIHByZWZpeDogbG9raV9pbmRleF8KICAgICMgICAgICAgcGVyaW9kOiAxNjhoCiAgICAjICAgICBjaHVua3M6IAogICAgIyAgICAgICBwcmVmaXg6IGxva2lfY2h1bmtfCiAgICAjICAgICAgIHBlcmlvZDogMTY4aAoKICAgICMgc3RvcmFnZV9jb25maWc6CiAgICAjICAgY2Fzc2FuZHJhOgogICAgIyAgICAgYWRkcmVzc2VzOiByb29rLWNhc3NhbmRyYS11cy1lYXN0LTEtdXMtZWFzdC0xYS0wLnJvb2stY2Fzc2FuZHJhLnN2Yy5pbnNpZ2h0djIuazhjbHVzdGVyICM8Y29tbWEtc2VwYXJhdGVkLUlQcy1vci1ob3N0bmFtZXM+IAogICAgIyAgICAgcG9ydDogOTA0MgogICAgIyAgICAga2V5c3BhY2U6IGxva2lpbmRleAogICAgIyAgICAgYXV0aDogZmFsc2UKICAgICMgICAgICMgdXNlcm5hbWU6IDx1c2VybmFtZT4gIyBvbmx5IGFwcGxpY2FibGUgd2hlbiBhdXRoPXRydWUKICAgICMgICAgICMgcGFzc3dvcmQ6IDxwYXNzd29yZD4gIyBvbmx5IGFwcGxpY2FibGUgd2hlbiBhdXRoPXRydWUKICAgICMgICAgIFNTTDogZmFsc2UKCiAgICBzY2hlbWFfY29uZmlnOgogICAgICBjb25maWdzOgogICAgICAtIGZyb206IDIwMjEtMDEtMDEKICAgICAgICBzdG9yZTogYm9sdGRiLXNoaXBwZXIKICAgICAgICBvYmplY3Rfc3RvcmU6IGF3cwogICAgICAgIHNjaGVtYTogdjExCiAgICAgICAgaW5kZXg6CiAgICAgICAgICBwcmVmaXg6IGluZGV4XwogICAgICAgICAgcGVyaW9kOiAyNGgKCiAgICBzdG9yYWdlX2NvbmZpZzoKICAgICAgYXdzOgogICAgICAgICMgZW5kcG9pbnQ6IHJvb2stY2VwaC1yZ3ctcHJldm9pci1ibS1zdG9yZS5yb29rLWNlcGg6ODAKICAgICAgICBidWNrZXRuYW1lczogbG9raS1jaHVua3MtY2VwaC1ia3QtYTRhZDg4N2MtMmEzMC00ZmRjLWJhNmMtZWVkZDAzNjJiZjg1CiAgICAgICAgIyBhY2Nlc3Nfa2V5X2lkOiBSRTNOWThOTEpTT1JQUks4T1c3RwogICAgICAgICMgc2VjcmV0X2FjY2Vzc19rZXk6IGtPY1lEY21lMW90UzJQQmpKQ2R3bktJWmg1SlV5djNBWjY0YjhFNmwKICAgICAgICBzM2ZvcmNlcGF0aHN0eWxlOiB0cnVlCiAgICAgICAgaW5zZWN1cmU6IHRydWUKICAgICAgICBzMzogaHR0cDovL1JFM05ZOE5MSlNPUlBSSzhPVzdHOmtPY1lEY21lMW90UzJQQmpKQ2R3bktJWmg1SlV5djNBWjY0YjhFNmxAcm9vay1jZXBoLXJndy1wcmV2b2lyLWJtLXN0b3JlLnJvb2stY2VwaDo4MAogICAgICBib2x0ZGJfc2hpcHBlcjoKICAgICAgICBhY3RpdmVfaW5kZXhfZGlyZWN0b3J5OiAvZGF0YS9sb2tpL2luZGV4CiAgICAgICAgY2FjaGVfbG9jYXRpb246IC9kYXRhL2xva2kvY2FjaGUKICAgICAgICBjYWNoZV90dGw6IDI0aAogICAgICAgIHNoYXJlZF9zdG9yZTogczMKCiAgICBxdWVyeV9yYW5nZToKICAgICAgIyBtYWtlIHF1ZXJpZXMgbW9yZSBjYWNoZS1hYmxlIGJ5IGFsaWduaW5nIHRoZW0gd2l0aCB0aGVpciBzdGVwIGludGVydmFscwogICAgICBhbGlnbl9xdWVyaWVzX3dpdGhfc3RlcDogdHJ1ZQogICAgICBtYXhfcmV0cmllczogNQogICAgICAjIHBhcmFsbGVsaXplIHF1ZXJpZXMgaW4gMTVtaW4gaW50ZXJ2YWxzCiAgICAgIHNwbGl0X3F1ZXJpZXNfYnlfaW50ZXJ2YWw6IDE1bQogICAgICBjYWNoZV9yZXN1bHRzOiB0cnVlCgogICAgICByZXN1bHRzX2NhY2hlOgogICAgICAgIGNhY2hlOgogICAgICAgICAgIyBXZSdyZSBnb2luZyB0byB1c2UgdGhlIGluLXByb2Nlc3MgIkZJRk8iIGNhY2hlCiAgICAgICAgICBlbmFibGVfZmlmb2NhY2hlOiB0cnVlCiAgICAgICAgICBmaWZvY2FjaGU6CiAgICAgICAgICAgIHNpemU6IDEwMjQKICAgICAgICAgICAgdmFsaWRpdHk6IDI0aAoKICAgIGxpbWl0c19jb25maWc6CiAgICAgIG1heF9jYWNoZV9mcmVzaG5lc3NfcGVyX3F1ZXJ5OiAnMTBtJwogICAgICBlbmZvcmNlX21ldHJpY19uYW1lOiBmYWxzZQogICAgICByZWplY3Rfb2xkX3NhbXBsZXM6IHRydWUKICAgICAgcmVqZWN0X29sZF9zYW1wbGVzX21heF9hZ2U6IDE2OGgKICAgICAgIyByZXRlbnRpb25fcGVyaW9kOiA3NDRoCiAgICAgICMgcmV0ZW50aW9uX3N0cmVhbToKICAgICAgIyAtIHNlbGVjdG9yOiAne25hbWVzcGFjZT0iZGV2In0nCiAgICAgICMgICBwcmlvcml0eTogMQogICAgICAjICAgcGVyaW9kOiAyNGgKCiAgICBpbmdlc3RlcjoKICAgICAgY2h1bmtfaWRsZV9wZXJpb2Q6IDNtCiAgICAgIGNodW5rX2Jsb2NrX3NpemU6IDI2MjE0NAogICAgICBjaHVua19yZXRhaW5fcGVyaW9kOiAxbQogICAgICBtYXhfdHJhbnNmZXJfcmV0cmllczogMAogICAgICBsaWZlY3ljbGVyOgogICAgICAgIHJpbmc6CiAgICAgICAgICBrdnN0b3JlOgogICAgICAgICAgICBzdG9yZTogaW5tZW1vcnkKICAgICAgICAgIHJlcGxpY2F0aW9uX2ZhY3RvcjogMwoKICAgIGNodW5rX3N0b3JlX2NvbmZpZzoKICAgICAgbWF4X2xvb2tfYmFja19wZXJpb2Q6IDBzCgogICAgY29tcGFjdG9yOgogICAgICB3b3JraW5nX2RpcmVjdG9yeTogL2RhdGEvbG9raS9yZXRlbnRpb24KICAgICAgc2hhcmVkX3N0b3JlOiBzMwogICAgICAjIGNvbXBhY3Rpb25faW50ZXJ2YWw6IDEwbQogICAgICAjIHJldGVudGlvbl9lbmFibGVkOiB0cnVlCiAgICAgICMgcmV0ZW50aW9uX2RlbGV0ZV9kZWxheTogMmgKICAgICAgIyByZXRlbnRpb25fZGVsZXRlX3dvcmtlcl9jb3VudDogMTUwCgogICAgdGFibGVfbWFuYWdlcjoKICAgICAgcmV0ZW50aW9uX2RlbGV0ZXNfZW5hYmxlZDogZmFsc2UKICAgICAgcmV0ZW50aW9uX3BlcmlvZDogMHM=
+---
+# Source: loki/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: loki
+  namespace: logging
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    heritage: Helm
+    release: loki
+rules:
+- apiGroups:      ['extensions']
+  resources:      ['podsecuritypolicies']
+  verbs:          ['use']
+  resourceNames:  [loki]
+---
+# Source: loki/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: loki
+  namespace: logging
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    heritage: Helm
+    release: loki
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: loki
+subjects:
+- kind: ServiceAccount
+  name: loki
+---
+# Source: loki/templates/service-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-headless
+  namespace: logging
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    release: loki
+    heritage: Helm
+    variant: headless
+spec:
+  clusterIP: None
+  ports:
+    - port: 3100
+      protocol: TCP
+      name: http-metrics
+      targetPort: http-metrics
+  selector:
+    app: loki
+    release: loki
+---
+# Source: loki/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  namespace: logging
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    release: loki
+    heritage: Helm
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3100
+      protocol: TCP
+      name: http-metrics
+      targetPort: http-metrics
+  selector:
+    app: loki
+    release: loki
+---
+# Source: loki/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: loki
+  namespace: logging
+  labels:
+    app: loki
+    chart: loki-2.8.1
+    release: loki
+    heritage: Helm
+  annotations:
+    {}
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 2
+  selector:
+    matchLabels:
+      app: loki
+      release: loki
+  serviceName: loki-headless
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: loki
+        name: loki
+        release: loki
+      annotations:
+        checksum/config: 110782cd1e03d794cea22425654f32eb807551f49aa89f097fe809f1e7753a53
+        prometheus.io/port: http-metrics
+        prometheus.io/scrape: "true"
+    spec:
+      serviceAccountName: loki
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+      initContainers:
+        []
+      containers:
+        - name: loki
+          image: "grafana/loki:2.4.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-config.file=/etc/loki/loki.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki
+            - name: storage
+              mountPath: "/data"
+              subPath: 
+          ports:
+            - name: http-metrics
+              containerPort: 3100
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+          resources:
+            {}
+          securityContext:
+            readOnlyRootFilesystem: true
+          env:
+      nodeSelector:
+        {}
+      affinity:
+        {}
+      tolerations:
+        []
+      terminationGracePeriodSeconds: 4800
+      volumes:
+        - name: config
+          secret:
+            secretName: loki
+        - name: storage
+          emptyDir: {}

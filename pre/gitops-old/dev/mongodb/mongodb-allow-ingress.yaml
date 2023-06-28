@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-allow-ingress
+  namespace: data-mongodb
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          project: common #change to the desired namespace if the pod is in another namespace
+    - podSelector:
+        matchLabels:
+          role: frontend #the label can be middle-tier or depending on what label you have for the pod to connect to db
+    ports:
+    - protocol: TCP
+      port: 27017

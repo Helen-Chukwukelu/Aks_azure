@@ -1,0 +1,54 @@
+#------------------------------
+# TERRAFORM INIT
+#------------------------------
+init-production:
+  extends: .init
+  variables:
+    CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS_PROD
+    DEPLOY_DIR: production
+  environment:
+    name: production
+    action: prepare
+
+#------------------------------
+# TERRAFORM LINT
+#------------------------------
+validate-production:
+  extends: .validate
+  variables:
+    CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS_PROD
+    DEPLOY_DIR: production
+  needs:
+    - init-production
+  environment:
+    name: production
+    action: prepare
+
+#------------------------------
+# TERRAFORM PLAN
+#------------------------------
+plan-production:
+  extends: .plan
+  variables:
+    CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS_PROD
+    DEPLOY_DIR: production
+  needs:
+    - lint
+    - validate-production
+  environment:
+    name: production
+    action: prepare
+
+#------------------------------
+# TERRAFORM APPLY
+#------------------------------
+apply-production:
+  extends: .apply
+  variables:
+    CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS_PROD
+    DEPLOY_DIR: production
+  needs:
+    - job: plan-production
+      artifacts: true
+  environment:
+    name: production

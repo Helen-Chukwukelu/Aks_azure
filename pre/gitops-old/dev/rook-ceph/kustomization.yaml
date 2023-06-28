@@ -1,0 +1,4 @@
+resources:
+#  - ./ceph-cluster/
+#  - ./rook-operator/
+  - rook-operator-chart.yaml
