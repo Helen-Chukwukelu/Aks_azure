@@ -1,0 +1,152 @@
+kind: ConfigMap
+metadata:
+  name: grafana-agent-traces
+  namespace: monitoring  
+apiVersion: v1
+data:
+  agent.yaml: |    
+    server:
+      http_listen_port: 80
+    traces:
+      configs:
+      - batch:
+          send_batch_size: 1000
+          timeout: 5s
+        name: tempo
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+              http:
+          #otlp/2:
+          #  protocols:
+          #    grpc:
+          #      endpoint: 0.0.0.0:55690              
+        remote_write:
+        - endpoint: ${TEMPO_URL}
+          basic_auth:
+            username: ${TEMPO_USERNAME}
+            password: ${TEMPO_PASSWORD}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: grafana-agent-traces
+  name: grafana-agent-traces
+  namespace: monitoring
+spec:
+  ports:
+  - name: grafana-agent-traces-http-metrics
+    port: 80
+    targetPort: 80
+  - name: grafana-agent-traces-thrift-compact
+    port: 6831
+    protocol: UDP
+    targetPort: 6831
+  - name: grafana-agent-traces-thrift-binary
+    port: 6832
+    protocol: UDP
+    targetPort: 6832
+  - name: grafana-agent-traces-thrift-http
+    port: 14268
+    protocol: TCP
+    targetPort: 14268
+  - name: grafana-agent-traces-thrift-grpc
+    port: 14250
+    protocol: TCP
+    targetPort: 14250
+  - name: grafana-agent-traces-zipkin
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  - name: grafana-agent-traces-otlp
+    port: 4317
+    protocol: TCP
+    targetPort: 4317
+  - name: grafana-agent-traces-opencensus
+    port: 55678
+    protocol: TCP
+    targetPort: 55678    
+  selector:
+    name: grafana-agent-traces
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-agent-traces
+  namespace: monitoring
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: grafana-agent-traces
+  template:
+    metadata:
+      labels:
+        name: grafana-agent-traces
+    spec:
+      containers:
+      - args:
+        - -config.file=/etc/agent/agent.yaml
+        - -server.http.address=0.0.0.0:80
+        command:
+        - /bin/agent
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: TEMP_URL
+          valueFrom:
+            secretKeyRef:
+              key: grafana-temp-url
+              name: grafana-agent-secret
+        - name: TEMP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: grafana-temp-username
+              name: grafana-agent-secret
+        - name: TEMP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: grafana-temp-password
+              name: grafana-agent-secret
+        image: grafana/agent:v0.24.2
+        imagePullPolicy: IfNotPresent
+        name: grafana-agent-traces
+        ports:
+        - containerPort: 80
+          name: http-metrics
+        - containerPort: 6831
+          name: thrift-compact
+          protocol: UDP
+        - containerPort: 6832
+          name: thrift-binary
+          protocol: UDP
+        - containerPort: 14268
+          name: thrift-http
+          protocol: TCP
+        - containerPort: 14250
+          name: thrift-grpc
+          protocol: TCP
+        - containerPort: 9411
+          name: zipkin
+          protocol: TCP
+        - containerPort: 4317
+          name: otlp
+          protocol: TCP
+        - containerPort: 55678
+          name: opencensus
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/agent
+          name: grafana-agent-traces
+      serviceAccount: grafana-agent
+      volumes:
+      - configMap:
+          name: grafana-agent-traces
+        name: grafana-agent-traces

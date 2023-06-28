@@ -1,0 +1,7 @@
+integration_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  stage: test
+  script:
+    - "cd $integration_test"
+    - "dotnet restore"
+    - "dotnet test /p:CollectCoverage=true"

@@ -1,0 +1,137 @@
+# Configure global settings in this section.
+global:
+  name: consul
+  # Bootstrap ACLs within Consul. This is highly recommended.
+  federation:
+    enabled: true
+    # primaryDatacenter: "dc1"
+    # primaryGateways: ["105.30.245.222:8443", "172.16.93.32:8443"]
+  tls: 
+    enabled: true
+    caCert:
+      secretName: consul-federation
+      secretKey: caCert
+    caKey:
+      secretName: consul-federation
+      secretKey: caKey
+  acls:
+    manageSystemACLs: false
+    replicationToken:
+      secretName: consul-federation
+      secretKey: replicationToken
+  # Gossip encryption
+  datacenter: dc2
+  gossipEncryption:
+    autoGenerate: false
+    secretName: consul-federation
+    secretKey: gossipEncryptionKey
+# Configure your Consul servers in this section.
+server:
+  extraConfig: |
+    {
+      "primary_datacenter": "dc1",
+      "primary_gateways": ["105.30.245.222:8443"]
+    }
+  # affinity: |
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       - labelSelector:
+  #           matchLabels:
+  #             app: {{ template "consul.name" . }}
+  #             release: "{{ .Release.Name }}"
+  #             component: server
+  #         topologyKey: kubernetes.io/hostname
+  # disruptionBudget:
+  #   enabled: true
+  #   maxUnavailable: 0
+  # extraConfig: |
+  #   {
+  #     "telemetry": {
+  #       "prometheus_retention_time": "10s"
+  #     },
+  #     "ui_config": {
+  #       "enabled": true,
+  #       "metrics_provider": "prometheus",
+  #       "metrics_proxy": {
+  #         "base_url": "http://prometheus-community-kube-prometheus"
+  #       }
+  #     }
+  #   }
+  # Specify three servers that wait until all are healthy to bootstrap the Consul cluster.
+  replicas: 1
+  # extraVolumes:
+  #   - type: secret
+  #     name: consul-federation
+  #     items:
+  #       - key: serverConfigJSON
+  #         path: config.json
+  #     load: true
+  # Specify the resources that servers request for placement. These values will serve a large environment.
+  # resources:
+  #   requests:
+  #     memory: '32Gi'
+  #     cpu: '4'
+  #     disk: '50Gi'
+  #   limits:
+  #     memory: '32Gi'
+  #     cpu: '4'
+  #     disk: '50Gi'
+  # If using Enterprise, reference the Kubernetes secret that holds your license here
+  # enterpriseLicense:
+  #   secretName: 'consul-license'
+  #   secretKey: 'key'
+# Configure Consul clients in this section
+client:
+  enabled: true
+  grpc: true
+  extraConfig: |
+    {"advertise_reconnect_timeout": "15m"}
+  # Specify the resources that clients request for deployment.
+  # resources:
+  #   requests:
+  #     memory: '8Gi'
+  #     cpu: '2'
+  #     disk: '15Gi'
+  #   limits:
+  #     memory: '8Gi'
+  #     cpu: '2'
+  #     disk: '15Gi'
+# Enable and configure the Consul UI.
+ui:
+  enabled: true
+# Enable Consul connect pod injection
+connectInject:
+  enabled: true
+  default: true
+  replicas: 1
+  k8sAllowNamespaces: ['*']
+  k8sDenyNamespaces: ['kube-system', 'kube-public']
+meshGateway:
+  enabled: true
+  replicas: 1
+  resources:
+    requests:
+      memory: "50Mi"
+      cpu: "50m"
+    limits:
+      memory: "100Mi"
+      cpu: "100m"
+# syncCatalog:
+#   enabled: true
+  # toConsul: true
+  # toK8S: false
+  # default: true
+  # k8sAllowNamespaces: ['argocd']
+  # k8sDenyNamespaces: ['kube-system', 'kube-public']
+controller:
+  enabled: true
+  replicas: 1
+#ingressGateways:
+#  enabled: false
+#  gateways:
+#    - name: ingress-gateway
+#      service:
+#        type: LoadBalancer
+#        port: 443      
+#      annotations: |
+#        "consul.hashicorp.com/connect-inject": "true"

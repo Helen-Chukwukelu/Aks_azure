@@ -1,0 +1,214 @@
+# Auto DevOps
+# This CI/CD configuration provides a standard pipeline for
+# * building a Docker image (using a buildpack if necessary),
+# * storing the image in the container registry,
+# * running tests from a buildpack,
+# * running code quality analysis,
+# * creating a review app for each topic branch,
+# * and continuous deployment to production
+#
+# Test jobs may be disabled by setting environment variables:
+# * test: TEST_DISABLED
+# * code_quality: CODE_QUALITY_DISABLED
+# * license_management: LICENSE_MANAGEMENT_DISABLED
+# * performance: PERFORMANCE_DISABLED
+# * sast: SAST_DISABLED
+# * dependency_scanning: DEPENDENCY_SCANNING_DISABLED
+# * container_scanning: CONTAINER_SCANNING_DISABLED
+# * dast: DAST_DISABLED
+# * review: REVIEW_DISABLED
+# * stop_review: REVIEW_DISABLED
+#
+# In order to deploy, you must have a Kubernetes cluster configured either
+# via a project integration, or via group/project variables.
+# KUBE_INGRESS_BASE_DOMAIN must also be set on the cluster settings,
+# as a variable at the group or project level, or manually added below.
+#
+# Continuous deployment to production is enabled by default.
+# If you want to deploy to staging first, set STAGING_ENABLED environment variable.
+# If you want to enable incremental rollout, either manual or time based,
+# set INCREMENTAL_ROLLOUT_MODE environment variable to "manual" or "timed".
+# If you want to use canary deployments, set CANARY_ENABLED environment variable.
+
+include:
+  - template: Jobs/Build.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab-ce/blob/master/lib/gitlab/ci/templates/Jobs/Build.gitlab-ci.yml
+  - template: Jobs/Code-Quality.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab-ce/blob/master/lib/gitlab/ci/templates/Jobs/Code-Quality.gitlab-ci.yml
+  # - template: dotNET.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/dotNET.gitlab-ci.yml
+  - template: dotNET-Core.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/dotNET-Core.gitlab-ci.yml
+
+image: alpine:latest
+
+variables:
+  # KUBE_INGRESS_BASE_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
+  # KUBE_INGRESS_BASE_DOMAIN: domain.example.com
+
+  DOCKER_DRIVER: overlay2
+
+  ROLLOUT_RESOURCE_TYPE: deployment
+
+  DOCKER_TLS_CERTDIR: "" # https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
+  # Custom varibles
+  STAGING_ENABLED: "true"
+
+  unit_test: "ReferenceData.Api.Tests"
+stages:
+  - build
+  - lint
+  - test
+  - deploy
+  - cleanup
+
+variables:
+  DOCKER_DRIVER: overlay2
+  BUILD_IMAGE: "${BASE_IMAGE_REGISTRY}/builder:latest"
+  DOCKER_BUILDKIT: 1
+  DOCKER_BUILD_TARGET: publish
+  CHART_URL: "${CI_API_V4_URL}/projects/${HELM_CHART_PROJECT_ID}/packages/helm/stable"
+  IMAGE_TAG: $CI_COMMIT_REF_SLUG-$CI_PIPELINE_IID
+
+build:
+  stage: build
+  script:
+    - echo "Running Pylint..."
+    - echo $CI_PROJECT_ROOT_NAMESPACE
+
+pylint:
+  stage: lint
+  before_script:
+    - echo "Running hadolint..."
+    - echo $CI_PROJECT_ROOT_NAMESPACE
+  script:
+    - pip install pylint
+    - pylint src/dojo_ci
+
+tox-test:
+  stage: test
+  before_script:
+    - echo "Running Python tests..."
+  script:
+    - pip install tox
+    - tox test
+
+publish-run:
+  stage: publish
+  script:
+    - apk update
+    - apk add --no-cache --virtual .pynacl_deps build-base python3-dev libffi-dev
+    - pip install twine
+    - python3 setup.py sdist bdist_wheel
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python3 -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+
+---
+
+
+image: mcr.microsoft.com/dotnet/sdk:latest
+
+stages:
+  - build
+  - test
+
+variables:
+  DOCKER_DRIVER: overlay2
+  STG_DOMAIN: app-stg.fmi.com
+  PRD_DOMAIN: app-prd.fmi.com
+  KUBECONFIG: /etc/deploy/config
+  HELM_CHART_VERSION: "1.0.*"
+  BUILD_IMAGE: "${BASE_IMAGE_REGISTRY}/builder:latest"
+  DOCKER_BUILDKIT: 1
+  DOCKER_BUILD_TARGET: publish
+  CHART_URL: "${CI_API_V4_URL}/projects/${HELM_CHART_PROJECT_ID}/packages/helm/stable"
+  IMAGE_TAG: $CI_COMMIT_REF_SLUG-$CI_PIPELINE_IID
+
+.build:
+  stage: build
+  # use the pre built image
+  image: $BUILD_IMAGE
+  before_script:
+    - *verify_variables
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $BASE_IMAGE_REGISTRY
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # auth
+    - $(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
+  script:
+    # Build the docker image
+    - |
+      [ -z "$DOCKER_DEVELOP" ] || docker build \
+        --cache-from $ECR_REGISTRY_URL:$IMAGE_TAG-development \
+        --cache-from $ECR_REGISTRY_URL:$IMAGE_TAG \
+        --cache-from $ECR_REGISTRY_URL:latest \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        $COMPOSER_SECRET \
+        -t $ECR_REGISTRY_URL:$IMAGE_TAG-development \
+        --target development .
+    # If the docker image builds successfully push the image to container registry
+    - '[ -z "$DOCKER_DEVELOP" ] || docker push $ECR_REGISTRY_URL:$IMAGE_TAG-development'
+    # Build the docker image
+    - |
+      docker build \
+        --cache-from $ECR_REGISTRY_URL:$IMAGE_TAG \
+        --cache-from $ECR_REGISTRY_URL:latest \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        $COMPOSER_SECRET \
+        -t $ECR_REGISTRY_URL:$IMAGE_TAG \
+        --target $DOCKER_BUILD_TARGET .
+    # If the docker image builds successfully push the image to container registry
+    - docker push $ECR_REGISTRY_URL:$IMAGE_TAG
+  rules:
+    - if: '$DISABLE_BUILD != null'
+      when: never
+    # is this a merge request
+    # or is it the default branch
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
+      when: always
+      
+cache:
+  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+  paths:
+    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
+    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
+    - '$NUGET_PACKAGES_DIRECTORY'
+  policy: pull-push
+
+before_script:
+  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+
+build:
+  stage: build
+  script:
+    - 'dotnet build --no-restore'
+
+tests:
+  stage: test
+  script:
+    - 'dotnet test --no-restore'
+
+# ignoring DS018 due to issue https://github.com/aquasecurity/appshield/issues/146
+code-scan:
+  extends: .build
+  stage: test
+  image: "${BASE_IMAGE_REGISTRY}/ci-default:latest"
+  allow_failure: true
+  script:
+    - |
+      [ -f .trivyignore ] || echo "DS018" > .trivyignore
+    - trivy fs . -o trivy-reports.json
+  rules:
+    - if: $CONTAINER_SCANNING_DISABLED
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
+      when: always
+
+image-scan:
+  extends: .build
+  image: "${BASE_IMAGE_REGISTRY}/ci-default:latest"
+  allow_failure: true
+  stage: test
+  script:
+    # Pull the docker image
+    - docker pull $ECR_REGISTRY_URL:$IMAGE_TAG
+    - trivy image $ECR_REGISTRY_URL:$IMAGE_TAG -o trivy-reports.json
+  rules:
+    - if: $CONTAINER_SCANNING_DISABLED
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
+      when: always

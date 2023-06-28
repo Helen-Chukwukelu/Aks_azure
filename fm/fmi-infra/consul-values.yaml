@@ -1,0 +1,61 @@
+#from the helm values file - consul-values.yaml
+global:
+  name: consul
+  enabled: true
+  gossipEncryption:
+    secretKey: gossipkey
+  
+#  tls:
+#    enabled: true
+#    enableAutoEncrypt: true
+#    verify: true
+  acls:
+    manageSystemACLs: false
+#syncCatalog:
+#  enabled: false
+#  toConsul: true
+#  toK8S: false
+#  default: true
+server:
+  disruptionBudget:
+    enabled: true
+    maxUnavailable: 0
+  extraConfig: |
+    {
+      "telemetry": {
+        "prometheus_retention_time": "10s"
+      },
+      "ui_config": {
+        "enabled": true,
+        "metrics_provider": "prometheus",
+        "metrics_proxy": {
+          "base_url": "http://prometheus-community-kube-prometheus"
+        }
+      }
+    }
+connectInject:
+  enabled: true  
+  default: false
+  centralConfig:
+    enabled: true
+    defaultProtocol: "http"
+    proxyDefaults: | 
+      {
+        "envoy_prometheus_bind_addr": "0.0.0.0:9102"
+      }
+#ingressGateways:
+#  enabled: false
+#  gateways:
+#    - name: ingress-gateway
+#      service:
+#        type: LoadBalancer
+#        port: 443      
+#      annotations: |
+#        "consul.hashicorp.com/connect-inject": "true"
+meshGateway:
+  enabled: false
+controller:
+  enabled: true
+client:
+  enabled: true
+  grpc: true

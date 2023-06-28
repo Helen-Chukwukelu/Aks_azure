@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: consul-dns-resolve
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: consul-dns-resolve
+          image: anubhavmishra/tiny-tools
+          command: ['/bin/export', '-c']
+          args: ['CONSULIPDNS=(dig', '+short', 'consul-dns.consul.svc.cluster.local)']
+      restartPolicy: Never
+  backoffLimit: 4

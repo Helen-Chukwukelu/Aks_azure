@@ -1,0 +1,73 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-reference-data
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/reference-data.pull-secret: pullsecret:argocd/argocd-image-updater-secret
+    argocd-image-updater.argoproj.io/image-list: reference-data=registry.gitlab.com/fmi-dev/reference-data/master
+    argocd-image-updater.argoproj.io/reference-data.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/reference-data.helm.image-tag: image.tag
+    argocd-image-updater.argoproj.io/reference-data.update-strategy: latest
+    argocd-image-updater.argoproj.io/reference-data.allow-tags: regexp:^[0-9a-f]{40}$
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/git-branch: main
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: test-reference-data
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  source:
+    # repoURL: 'https://gitlab.com/api/v4/projects/37280236/packages/helm/0.1.0'
+    repoURL: git@gitlab.com:fmi-dev/infrastructure/gitlab-terraform-infra/ArgoCD-Config.git
+    targetRevision: HEAD
+    helm:
+      # valueFiles:
+      #   - values.yaml
+      # parameters:
+      #   - name: fullnameOverride
+      #     value: test-reference-data
+      #   - name: image.tag
+      #     value: 68fd50d3171725c6bd8a8bc2f017f66d5c666a50@sha256:dec6029f82a1b2de8f4135e3cf81f2ea872dbe42db96d2b2ec649d5786fe1b49
+      #   - name: nameOverride
+      #     value: test-reference-data
+      #   - name: serviceAccount.create
+      #     value: 'false'
+      #   - name: image.repository
+      #     value: registry.gitlab.com/fmi-dev/reference-data/master
+      values: |
+        fullnameOverride: test-reference-data
+        nameOverride: test-reference-data
+        serviceAccount:
+          create: 'false'
+        updateStrategy:
+          type: Recreate
+          rollingUpdate: null
+        image:
+          repository: registry.gitlab.com/fmi-dev/reference-data/master
+          tag: 68fd50d3171725c6bd8a8bc2f017f66d5c666a50
+        imagePullSecrets:
+        - name: registry-credentials
+        environmentvariables:
+        - name: DD_AGENT_HOST
+          value: "localhost"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: CONSUL_HOST
+          value: "http://consul.service.consul:8500"
+        - name: CONSUL_ENV
+          value: reference-data/development.json
+        - name: JACO_ENV
+          value: help
+        podAnnotations:
+          consul.hashicorp.com/connect-inject: "true"
+          consul.hashicorp.com/connect-service-upstreams: ""
+          consul.hashicorp.com/connect-service: "test-reference-data"
+    # chart: default-helm-3-9-0
+    path: charts/default-helm-3-9-0

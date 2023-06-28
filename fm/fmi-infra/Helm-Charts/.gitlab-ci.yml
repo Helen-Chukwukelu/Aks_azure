@@ -1,0 +1,13 @@
+stages:
+  - helm-publish
+
+helm-publish:
+  stage: helm-publish
+  image:
+    name: alpine/helm:latest
+    entrypoint: [""]
+  script:
+    - printenv
+    # - helm repo add --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD my-repo $CI_REGISTRY
+    # - helm package my-chart
+    # - helm push my-chart.tgz my-repo

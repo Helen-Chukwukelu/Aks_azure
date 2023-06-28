@@ -1,0 +1,11 @@
+source:
+    kind: Service
+    name: consul-dns
+    namespace: consul
+    fieldPath: spec.clusterIP
+targets:
+  - select:
+      name: coredns-custom
+      kind: ConfigMap
+    fieldPaths:
+    - data.azurestack.server.[consul=53].forward.CONSULIPDNS

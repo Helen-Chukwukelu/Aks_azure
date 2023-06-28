@@ -1,0 +1,8 @@
+resources:
+  - cluster-secret-store.yaml
+  - kube-state-metrics.yaml
+  - grafana-agent-service-account.yaml
+  - grafana-agent-metrics.yaml
+  - grafana-external-secrets.yaml
+  - grafana-agent-logs.yaml
+  - grafana-agent-traces.yaml

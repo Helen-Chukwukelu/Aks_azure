@@ -1,0 +1,4 @@
+resources:
+  - external-secrets.yaml
+#  - crds-bundle.yaml #https://github.com/external-secrets/external-secrets/blob/main/deploy/crds/bundle.yaml
+  - crs

@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: consul
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: consul
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  source:
+    repoURL: https://helm.releases.hashicorp.com
+    targetRevision: 0.45.0
+    chart: consul
+    helm:
+      values: |
+        global:
+          name: consul
+          datacenter: testing-cluster
+          gossipEncryption:
+            autoGenerate: true
+        server:
+          enabled: true
+          replicas: 1
+          storage: 1Gi
+        client:
+          enabled: true
+        connectInject:
+          enabled: true
+          replicas: 1
+        controller:
+          enabled: true
+        syncCatalog:
+          enabled: true
+          default: false
+          toConsul: false
+          toK8S: true
+  ignoreDifferences:
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    name: consul-connect-injector
+    jqPathExpressions:
+      - .webhooks[].namespaceSelector.matchExpressions[] | select(.key == "control-plane")

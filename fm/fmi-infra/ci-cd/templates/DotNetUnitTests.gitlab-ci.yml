@@ -1,0 +1,7 @@
+unit_test:
+  image: microsoft/dotnet:latest
+  stage: test
+  script:
+    - "cd $unit_test"
+    - "dotnet restore"
+    - "dotnet test /p:CollectCoverage=true"

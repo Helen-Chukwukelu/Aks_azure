@@ -1,0 +1,9 @@
+resources:
+  - apps.yaml
+  - argocd.yaml
+  - external-secrets-app.yaml
+  - cert-manager-app.yaml
+  - ingress-nginx-app.yaml
+#  - consul-app.yaml
+  - monitoring.yaml
+  - reference-data.yaml

@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  default-helm-3-9-0:
+  - apiVersion: v2
+    appVersion: 3.9.0
+    created: "2022-07-06T15:13:15.221057+02:00"
+    description: A Helm chart for Kubernetes
+    digest: cad8dd017dcfb16de7caca4a37adc91b21a133e9ae1e05c41c4113b5219dc089
+    name: default-helm-3-9-0
+    type: application
+    urls:
+    - default-helm-3-9-0-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-07-06T15:13:15.2175603+02:00"

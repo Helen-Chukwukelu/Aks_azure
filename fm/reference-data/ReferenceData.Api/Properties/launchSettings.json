@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "ReferenceData.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:5007/swagger/index.html",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "DD_AGENT_HOST": "localhost",
+        "CORECLR_ENABLE_PROFILING": 1,
+        "CORECLR_PROFILER": "{846F5F1C-F9AE-4B07-969E-05C26BC060D8}",
+        "DD_DOTNET_TRACER_HOME": "/opt/datadog",
+        "DD_INTEGRATIONS": "/opt/datadog/integrations.json",
+        "CORECLR_PROFILER_PATH": "/opt/datadog/Datadog.Trace.ClrProfiler.Native.so",
+        "CONSUL_ENV": "reference-data/local.json",
+        "CONSUL_HOST": "http://localhost:8500"
+      },
+      "applicationUrl": "http://localhost:5007",
+      "dotnetRunMessages": "true"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.repository
+    value: registry.gitlab.com/fmi-dev/reference-data/master
+    forcestring: true
+  - name: image.tag
+    value: be8406d7141dc3a18ce24ca85872275eb5c19ad7
+    forcestring: true

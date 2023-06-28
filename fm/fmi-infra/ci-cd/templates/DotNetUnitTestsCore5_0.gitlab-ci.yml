@@ -1,0 +1,7 @@
+unit_test:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  stage: test
+  script:
+    - "cd $unit_test"
+    - "dotnet restore"
+    - "dotnet test /p:CollectCoverage=true"

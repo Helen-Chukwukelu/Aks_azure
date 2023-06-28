@@ -1,0 +1,48 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceData.Api", "ReferenceData.Api\ReferenceData.Api.csproj", "{9DA89B05-61F1-4D9E-BF29-9100CC204DD1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D061FC5C-9984-49E5-BDEA-A58052C6FD37}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		ReferenceData.Api\.editorconfig = ReferenceData.Api\.editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.gitlab-ci.yml = .gitlab-ci.yml
+		Dockerfile = Dockerfile
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceData.Api.Tests", "ReferenceData.Api.Tests\ReferenceData.Api.Tests.csproj", "{36B1BE3C-56FA-4489-A800-ED89E75DA107}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceData.Configuration", "ReferenceData.Configuration\ReferenceData.Configuration.csproj", "{15C15F99-1CD3-4579-AF10-11FB26DD28EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9DA89B05-61F1-4D9E-BF29-9100CC204DD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DA89B05-61F1-4D9E-BF29-9100CC204DD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DA89B05-61F1-4D9E-BF29-9100CC204DD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DA89B05-61F1-4D9E-BF29-9100CC204DD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36B1BE3C-56FA-4489-A800-ED89E75DA107}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36B1BE3C-56FA-4489-A800-ED89E75DA107}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36B1BE3C-56FA-4489-A800-ED89E75DA107}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36B1BE3C-56FA-4489-A800-ED89E75DA107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15C15F99-1CD3-4579-AF10-11FB26DD28EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15C15F99-1CD3-4579-AF10-11FB26DD28EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15C15F99-1CD3-4579-AF10-11FB26DD28EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15C15F99-1CD3-4579-AF10-11FB26DD28EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8BD018F-0029-4F26-B39C-849802037EFA}
+	EndGlobalSection
+EndGlobal
