@@ -1,6 +1,0 @@
-resources:
-  - argocd.yaml
-  - cert-manager.yaml
-  - nginx-controller.yaml
-  - kubernetes-external-secret.yaml
-  - elk.yaml

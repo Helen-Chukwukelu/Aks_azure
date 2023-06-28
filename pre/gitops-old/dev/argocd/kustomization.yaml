@@ -1,8 +1,0 @@
-resources:
-  - argocd.yaml
-  - cert-manager.yaml
-  - nginx-controller.yaml
-  - linkerd.yaml
-  - namespaces.yaml
-  - rbac.yaml
-  - mongodb.yaml
