@@ -1,8 +1,8 @@
-/* terraform {
+terraform {
   backend "azurerm" {
-    resource_group_name  = "backend-rg"
-    storage_account_name = "backendsa101"
+    resource_group_name  = "test-neyo-rg"
+    storage_account_name = "neyoaksstr"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "dev.terraform.tfstate" 
   }
-} */
+}
