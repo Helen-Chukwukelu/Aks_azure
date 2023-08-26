@@ -4,7 +4,7 @@ variable "rgname" {
 }
 
 variable "location" {
-  type    = string
+  type = string
 }
 
 variable "service_principal_name" {
@@ -12,5 +12,15 @@ variable "service_principal_name" {
 }
 
 variable "keyvault_name" {
+  type = string
+}
+
+variable "storage_account_name" {
+  type = string
+}
+variable "accoun_tier" {
+  type = string
+}
+variable "act_repl_type" {
   type = string
 }

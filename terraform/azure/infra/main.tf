@@ -64,8 +64,17 @@ module "aks" {
 }
 
 resource "local_file" "kubeconfig" {
-  depends_on   = [module.aks]
-  filename     = "./kubeconfig"
-  content      = module.aks.config
-  
+  depends_on = [module.aks]
+  filename   = "./kubeconfig"
+  content    = module.aks.config
+
+}
+
+module "storageacct" {
+  source                 = "./modules/storage"
+  storage_account_Name   = var.storage_account_name
+  resource_group_name    = var.rgname
+  location               = var.location
+  accounttier            = var.accoun_tier
+  accountreplicationtype = var.act_repl_type
 }
