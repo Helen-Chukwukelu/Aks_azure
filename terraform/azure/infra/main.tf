@@ -78,3 +78,10 @@ module "storageacct" {
   accounttier            = var.accoun_tier
   accountreplicationtype = var.act_repl_type
 }
+
+module "appgw" {
+  source                 = "./modules/network"
+  resource_group_name    = var.node_rg
+  location               = var.location
+}
+

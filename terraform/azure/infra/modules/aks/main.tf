@@ -67,5 +67,25 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     load_balancer_sku = "standard"
   }
 
+  /* ingress_application_gateway {
+    gateway_name = var.appgw
+    gateway_id    = azurerm_application_gateway.main.id
+    subnet_id = azurerm_subnet.frontend.id
+    subnet_cidr = "10.21.0.0/24"
+  } */
 
+  /* addon_profile {
+    ingress_application_gateway {
+      enabled    = true
+      gateway_id = azurerm_application_gateway.application-gateway-network-1.id
+    }
+  }
+
+  addon_profile {
+    ingress_controller_addon_applicationgateway {
+      id_appgateway = #the id of the application gateway new or exisiting
+    }
+  } */
 }
+
+

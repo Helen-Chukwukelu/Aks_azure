@@ -24,3 +24,8 @@ variable "accoun_tier" {
 variable "act_repl_type" {
   type = string
 }
+
+variable "node_rg" {
+  type = string
+  default = "test-neyo-rg-nrg"
+}
