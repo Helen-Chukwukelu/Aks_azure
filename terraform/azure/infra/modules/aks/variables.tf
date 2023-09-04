@@ -27,3 +27,20 @@ variable "acr_name" {
   type    = string
   default = "neyoacr"
 }
+
+variable "appgw" {
+  default = "testAppGateway"
+}
+
+variable "AppGw_node_rg" {
+  type = string
+  default = "test-neyo-rg-nrg"
+}
+
+variable "AppGw_vnet_name" {
+  default = "AppGwVnet"
+}
+
+variable "AppGw_frontend_sub" {
+  default = "frontAGSubnet"
+}

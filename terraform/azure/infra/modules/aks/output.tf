@@ -21,3 +21,11 @@ output "acr_id" {
 output "acr_login_server" {
   value = azurerm_container_registry.acr.login_server
 }
+
+output "id" {
+  value = data.azurerm_application_gateway.appgw.id
+}
+
+/* output "subnet_id" {
+  value = data.azurerm_subnet.front_sub.id
+} */
