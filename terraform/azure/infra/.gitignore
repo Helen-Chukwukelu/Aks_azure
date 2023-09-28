@@ -27,3 +27,4 @@ sa.json
 *.ovpn
 *.pem
 *.pub
+kubeconfig

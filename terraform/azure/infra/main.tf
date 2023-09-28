@@ -23,6 +23,61 @@ resource "azurerm_role_assignment" "rolespn" {
   ]
 }
 
+resource "azurerm_role_assignment" "spn_kv" {
+
+  scope                = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0"
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = module.ServicePrincipal.service_principal_object_id
+
+  depends_on = [
+    module.ServicePrincipal
+  ]
+}
+
+resource "azurerm_role_assignment" "sys_ass" {
+
+  scope                = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0"
+  role_definition_name = "Contributor"
+  principal_id         = data.azurerm_kubernetes_cluster.main.identity.0.principal_id
+
+  depends_on = [
+    module.aks
+  ]
+}
+
+resource "azurerm_role_assignment" "secret_kv_role" {
+
+  scope                = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0/resourceGroups/test-neyo-rg/providers/Microsoft.KeyVault/vaults/test-neyo-kv-101"
+  role_definition_name = "Key Vault Administrator"
+  principal_id         = data.azurerm_kubernetes_cluster.main.identity.0.principal_id
+
+  depends_on = [
+    module.aks
+  ]
+}
+
+resource "azurerm_role_assignment" "secret_identity_role" {
+
+  scope                = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0/resourceGroups/test-neyo-rg/providers/Microsoft.KeyVault/vaults/test-neyo-kv-101"
+  role_definition_name = "Key Vault Administrator"
+  principal_id         = "19e0c761-bc4b-4bb8-a78f-35558fa035d1"
+
+  depends_on = [
+    module.aks
+  ]
+}
+
+resource "azurerm_role_assignment" "wep_app_identity_role" {
+
+  scope                = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0/resourceGroups/domainrg/providers/Microsoft.Network/dnsZones/solarwhize.com"
+  role_definition_name = "DNS Zone Contributor"
+  principal_id         = "6ede99ef-fd53-4b9c-84ec-1083485631ae"
+
+  depends_on = [
+    module.aks
+  ]
+}
+
 module "keyvault" {
   source                      = "./modules/keyvault"
   keyvault_name               = var.keyvault_name
@@ -70,6 +125,7 @@ resource "local_file" "kubeconfig" {
 
 }
 
+#create Azure Storage account
 module "storageacct" {
   source                 = "./modules/storage"
   storage_account_Name   = var.storage_account_name
@@ -79,9 +135,12 @@ module "storageacct" {
   accountreplicationtype = var.act_repl_type
 }
 
-module "appgw" {
+#create Azure Application Gateway
+/* module "appgw" {
   source                 = "./modules/network"
   resource_group_name    = var.node_rg
   location               = var.location
-}
+} */
+
+
 

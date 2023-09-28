@@ -23,12 +23,12 @@ variable "client_secret" {
   sensitive = true
 }
 
-variable "acr_name" {
+/* variable "acr_name" {
   type    = string
   default = "neyoacr"
-}
+} */
 
-variable "appgw" {
+/* variable "appgw" {
   default = "testAppGateway"
 }
 
@@ -43,4 +43,4 @@ variable "AppGw_vnet_name" {
 
 variable "AppGw_frontend_sub" {
   default = "frontAGSubnet"
-}
+} */

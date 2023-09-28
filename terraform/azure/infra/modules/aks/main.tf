@@ -1,23 +1,24 @@
-# Datasource to get Latest Azure AKS latest Version
-data "azurerm_kubernetes_service_versions" "current" {
-  location        = var.location
-  include_preview = false
-}
-
-resource "azurerm_role_assignment" "role_acrpull" {
+/* resource "azurerm_role_assignment" "role_acrpull" {
   scope                = azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
   principal_id         = azurerm_kubernetes_cluster.aks-cluster.service_principal.0.client_id
   skip_service_principal_aad_check = true
-}
+} */
 
-resource "azurerm_container_registry" "acr" {
+/* resource "azurerm_role_assignment" "role_acrpull_sys" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_kubernetes_cluster.aks-cluster.identity.0.principal_id
+  skip_service_principal_aad_check = true
+} */
+
+/* resource "azurerm_container_registry" "acr" {
   name                = var.acr_name
   resource_group_name = var.resource_group_name
   location            = var.location
   sku                 = "Standard"
   admin_enabled       = false
-}
+} */
 
 resource "azurerm_kubernetes_cluster" "aks-cluster" {
   name                = var.cluster_name
@@ -48,12 +49,18 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     }
   }
 
-  service_principal {
+  /* service_principal {
     client_id     = var.client_id
     client_secret = var.client_secret
+  } */
+
+  identity {
+    type = "SystemAssigned"
   }
 
-
+  key_vault_secrets_provider {
+    secret_rotation_enabled = true
+  }
 
   linux_profile {
     admin_username = "ubuntu"
@@ -67,25 +74,15 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     load_balancer_sku = "standard"
   }
 
-  ingress_application_gateway {
-    /* gateway_name = var.appgw */
+  /* ingress_application_gateway {
+    gateway_name = var.appgw
     gateway_id    = data.azurerm_application_gateway.appgw.id
-  #  subnet_id = data.azurerm_subnet.front_sub.id
-  #  subnet_cidr = "10.21.0.0/24"
-  }
-
-  /* addon_profile {
-    ingress_application_gateway {
-      enabled    = true
-      gateway_id = azurerm_application_gateway.application-gateway-network-1.id
-    }
-  }
-
-  addon_profile {
-    ingress_controller_addon_applicationgateway {
-      id_appgateway = #the id of the application gateway new or exisiting
-    }
+    subnet_id = data.azurerm_subnet.front_sub.id
+    subnet_cidr = "10.21.0.0/24"
   } */
-}
 
+  web_app_routing {
+    dns_zone_id = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0/resourceGroups/domainrg/providers/Microsoft.Network/dnsZones/solarwhize.com"
+  }
+}
 

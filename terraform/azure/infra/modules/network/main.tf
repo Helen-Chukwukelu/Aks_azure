@@ -88,7 +88,7 @@ resource "azurerm_application_gateway" "main" {
     frontend_ip_configuration_name = var.frontend_ip_configuration_name
     frontend_port_name             = var.frontend_port_name
     protocol                       = "Http"
-    /* ssl_certificate_name = "appgw-testgateway-eastus-ssl01" */
+    /* ssl_certificate_name = var.cert_name */
   }
 
   request_routing_rule {
@@ -101,9 +101,9 @@ resource "azurerm_application_gateway" "main" {
   }
 
   /* ssl_certificate {
-    name = "appgw-testgateway-eastus-ssl01"
+    name = var.cert_name
     data = filebase64("path/to/file") # encode the contents of the file
-    key_vault_secret_id = "https://test-neyo-kv-101.vault.azure.net/secrets/neyo-test-ca/919e7f3f30c9425a81cf8beb7036c7d4"
+    key_vault_secret_id = data.azurerm_key_vault_certificate.main.secret_id
   } */
 
 }
@@ -118,6 +118,17 @@ resource "azurerm_role_assignment" "appgwidentity" {
 
   scope                = "/subscriptions/c7159b76-0836-4a8d-99df-ab0ef217acb0/resourceGroups/test-neyo-rg-nrg"
   role_definition_name = "Contributor"
+  principal_id         = data.azurerm_user_assigned_identity.main.principal_id
+
+  depends_on = [
+    azurerm_user_assigned_identity.main
+  ]
+}
+
+resource "azurerm_role_assignment" "kv_read" {
+
+  scope                = data.azurerm_key_vault.main.id
+  role_definition_name = "Key Vault Secrets User"
   principal_id         = data.azurerm_user_assigned_identity.main.principal_id
 
   depends_on = [

@@ -14,17 +14,17 @@ output "aks_node_rg" {
   value = azurerm_kubernetes_cluster.aks-cluster.node_resource_group
 }
 
-output "acr_id" {
+/* output "acr_id" {
   value = azurerm_container_registry.acr.id
 }
 
 output "acr_login_server" {
   value = azurerm_container_registry.acr.login_server
-}
+} */
 
-output "id" {
+/* output "id" {
   value = data.azurerm_application_gateway.appgw.id
-}
+} */
 
 /* output "subnet_id" {
   value = data.azurerm_subnet.front_sub.id

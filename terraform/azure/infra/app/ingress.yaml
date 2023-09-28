@@ -1,0 +1,55 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   annotations:
+#     kubernetes.azure.com/tls-cert-keyvault-uri: https://test-neyo-kv-101.vault.azure.net/certificates/neyo-test-ca/919e7f3f30c9425a81cf8beb7036c7d4
+#     kubernetes.azure.com/tls-cert-keyvault-uri: azure-tls
+#   name: helloworld-ingress
+#   namespace: hello-web-app
+# spec:
+#   ingressClassName: webapprouting.kubernetes.azure.com
+#   rules:
+#   - host: webserver.solarwhize.com
+#     http:
+#       paths:
+#       - backend:
+#           service:
+#             name: aks-helloworld
+#             port:
+#               number: 80
+#         path: /
+#         pathType: Prefix
+#   tls:
+#   - hosts:
+#     - webserver.solarwhize.com
+#     #secretName: keyvault-helloworld-ingress
+#     secretName: ingress-tls-csi
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.azure.com/tls-cert-keyvault-uri: https://test-neyo-kv-101.vault.azure.net/certificates/neyo-test-ca/919e7f3f30c9425a81cf8beb7036c7d4
+    # kubernetes.azure.com/tls-cert-keyvault-uri: azure-tls
+  name: helloworld-ingress
+  namespace: hello-web-app
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - host: webserver.solarwhize.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: aks-helloworld
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - webserver.solarwhize.com
+    secretName: keyvault-helloworld-ingress
+    #secretName: ingress-tls-csi

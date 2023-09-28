@@ -69,3 +69,15 @@ variable "AppGWtoAKSVnetPeering_name" {
 variable "aks_vnet_name" {
   default = "aks-vnet-77731381"
 }
+
+variable "key_vault_name" {
+  default = "test-neyo-kv-101"
+}
+
+variable "cert_name" {
+  default = "neyo-test-ca" 
+}
+
+variable "kv_rg" {
+  default = "test-neyo-rg" 
+}
